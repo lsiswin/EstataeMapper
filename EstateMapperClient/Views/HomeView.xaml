@@ -1,0 +1,188 @@
+﻿<UserControl
+    x:Class="EstateMapperClient.Views.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:EstateMapperClient.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid>
+        <ProgressBar
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsIndeterminate="{Binding Progress}"
+            Style="{StaticResource MaterialDesignCircularProgressBar}" />
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel
+                Grid.Row="0"
+                Margin="0,10,0,0"
+                Orientation="Horizontal">
+
+                <ComboBox
+                    Width="100"
+                    Margin="10"
+                    DisplayMemberPath="Name"
+                    FontSize="15"
+                    ItemsSource="{Binding Regions}"
+                    SelectedValue="{Binding SelectedRegionId}"
+                    SelectedValuePath="RegionId" />
+
+                <ComboBox
+                    Width="100"
+                    Margin="10"
+                    DisplayMemberPath="Name"
+                    FontSize="15"
+                    IsEnabled="{Binding HasSelectedRegion}"
+                    ItemsSource="{Binding FilteredSubRegions}"
+                    SelectedValue="{Binding SelectedSubRegionId}"
+                    SelectedValuePath="SubRegionId" />
+
+                <TextBox
+                    Width="100"
+                    Margin="10"
+                    FontSize="15"
+                    Text="请输入内容..." />
+                <Button
+                    Margin="10"
+                    Content="搜索"
+                    Style="{StaticResource MaterialDesignFlatDarkButton}" />
+            </StackPanel>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <ListBox
+                        Grid.Row="0"
+                        Margin="0,20"
+                        ItemsSource="{Binding HouseDtos}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <materialDesign:Card>
+                                    <Grid Width="900" Margin="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image
+                                            Width="200"
+                                            Height="200"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Source="{Binding MainImageUrl}"
+                                            Stretch="UniformToFill" />
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="10"
+                                            LastChildFill="True">
+                                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+
+                                                <TextBlock Margin="2,25" HorizontalAlignment="Center">
+                                                    单价
+                                                </TextBlock>
+                                                <TextBlock
+                                                    FontSize="40"
+                                                    Foreground="Red"
+                                                    Text="{Binding Price}" />
+                                                <TextBlock Margin="2,25">
+                                                    元/㎡
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <StackPanel Margin="0,20" DockPanel.Dock="Top">
+                                                <TextBlock FontSize="30" Text="{Binding Name}" />
+                                                <TextBlock
+                                                    Margin="0,10,0,30"
+                                                    DockPanel.Dock="Top"
+                                                    FontSize="15"
+                                                    Text="{Binding DetailAddress}" />
+                                            </StackPanel>
+
+                                            <Button
+                                                Content="查看详情"
+                                                DockPanel.Dock="Right"
+                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
+                                            <ItemsControl ItemsSource="{Binding Tags}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <materialDesign:Chip Style="{StaticResource MaterialDesignOutlineChip}">
+                                                            <TextBlock Text="{Binding TagName}" />
+                                                        </materialDesign:Chip>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </DockPanel>
+                                    </Grid>
+                                </materialDesign:Card>
+
+
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <local:PaginationControl
+                        Grid.Row="1"
+                        VerticalAlignment="Bottom"
+                        DataContext="{Binding Pagination}" />
+                </Grid>
+                <DockPanel Grid.Column="1" Margin="10,0">
+                    <TextBlock
+                        DockPanel.Dock="Top"
+                        FontSize="20"
+                        Foreground="Black"
+                        Text="热门楼盘排行榜" />
+                    <ListBox
+                        ItemsSource="{Binding HouseDtos}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding ItemClickCommand}" CommandParameter="{Binding}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Image
+                                        Width="250"
+                                        Height="200"
+                                        Source="{Binding MainImageUrl}"
+                                        Stretch="UniformToFill" />
+                                    <TextBlock
+                                        Margin="0,10,0,0"
+                                        FontSize="15"
+                                        Foreground="Red"
+                                        Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</UserControl>
