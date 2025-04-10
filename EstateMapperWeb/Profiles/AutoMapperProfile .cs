@@ -20,14 +20,16 @@ namespace EstateMapperWeb.Profiles
             // TagDto → Tag（仅映射基础字段）
             CreateMap<TagDto, Tag>()
                 .ForMember(dest => dest.HouseId, opt => opt.Ignore());
-           
 
-           
+            CreateMap<UserDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password)); // 忽略 Houses
+
 
             // 反向映射（用于返回 DTO）
             CreateMap<House, HouseDto>();
             CreateMap<Layout, LayoutDto>();
             CreateMap<Tag, TagDto>();
+            CreateMap<User,UserDto>().ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.PasswordHash)); 
         }
     }
 }

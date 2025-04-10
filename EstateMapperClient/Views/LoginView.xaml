@@ -1,0 +1,95 @@
+﻿<Window
+    x:Class="EstateMapperClient.Views.LoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:EstateMapperClient.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="680"
+    Height="400"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Grid>
+        <!--  背景图片层  -->
+        <Image Source="D:\Cshrap\EstateMapper\EstateMapperLibrary\Images\mmexport1723645861671.jpg" Stretch="UniformToFill">
+            <Image.Effect>
+                <BlurEffect Radius="15" />
+            </Image.Effect>
+        </Image>
+
+        <!--  半透明遮罩层  -->
+        <Rectangle Fill="#88000000" />
+
+        <!--  登录卡片容器  -->
+        <Grid VerticalAlignment="Center">
+            <materialDesign:Card
+                Width="350"
+                Padding="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <StackPanel>
+                    <!--  标题  -->
+                    <TextBlock
+                        Margin="0,10,0,10"
+                        HorizontalAlignment="Center"
+                        FontSize="24"
+                        FontWeight="SemiBold"
+                        Text="用户登录" />
+
+                    <!--  用户名输入  -->
+
+                    <TextBox
+                        Margin="10,10"
+                        materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        materialDesign:HintAssist.Hint="用户名"
+                        FontSize="16"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+
+
+                    <!--  密码输入  -->
+                    <PasswordBox
+                        Margin="10,10,10,10"
+                        materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        materialDesign:HintAssist.Hint="密码"
+                        FontSize="16"
+                        Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+
+                    <!--  登录按钮  -->
+                    <Button
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsLoggingIn}"
+                        materialDesign:ButtonProgressAssist.Value="-1"
+                        Command="{Binding LoginCommand}"
+                        Content="登录"
+                        FontSize="16"
+                        Style="{StaticResource MaterialDesignFlatLightButton}" />
+
+                    <!--  底部链接  -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Command="{Binding ForgotPasswordCommand}"
+                            Content="忘记密码？"
+                            Foreground="{DynamicResource PrimaryHueMidBrush}"
+                            Style="{StaticResource MaterialDesignFlatLightButton}" />
+                        <Button
+                            Margin="90,0,0,0"
+                            Command="{Binding RegisterCommand}"
+                            Content="注册新账户"
+                            Foreground="{DynamicResource SecondaryHueMidBrush}"
+                            Style="{StaticResource MaterialDesignFlatLightButton}" />
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!--  进度条  -->
+            <ProgressBar
+                Margin="20"
+                VerticalAlignment="Top"
+                IsIndeterminate="{Binding IsLoading}"
+                Style="{StaticResource MaterialDesignCircularProgressBar}"
+                Value="0" />
+        </Grid>
+
+    </Grid>
+</Window>

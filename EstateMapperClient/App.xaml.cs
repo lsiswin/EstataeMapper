@@ -17,7 +17,8 @@ namespace EstateMapperClient
     {
         protected override Window CreateShell()
         {
-            return Container.Resolve<MainWindow>();
+            
+            return Container.Resolve<LoginView>();
         }
         protected override void OnInitialized()
         {
@@ -37,6 +38,7 @@ namespace EstateMapperClient
 
             // 必须注册窗口类型
             containerRegistry.Register<MainWindow>();
+            containerRegistry.Register<LoginView>();
 
             containerRegistry.Register<IHouseService,HouseService>();
             containerRegistry.Register<ILayoutService, LayoutService>();

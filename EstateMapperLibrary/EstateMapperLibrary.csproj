@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\11b627f726b8b46414b6713c202e5e6.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

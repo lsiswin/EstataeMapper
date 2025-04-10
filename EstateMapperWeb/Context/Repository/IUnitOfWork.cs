@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using EstateMapperLibrary.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EstateMapperWeb.Context.Repository
 {

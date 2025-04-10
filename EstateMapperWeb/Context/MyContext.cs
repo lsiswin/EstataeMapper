@@ -1,20 +1,36 @@
 ﻿using EstateMapperLibrary.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EstateMapperWeb.Context
 {
-    public class MyContext : DbContext
+    public class MyContext : IdentityDbContext<User>
     {
+    //    public DbSet<IdentityUser> Users { get; set; } = null!;
+    //    public DbSet<IdentityRole> Roles { get; set; } = null!;
+    //    public DbSet<IdentityUserRole<string>> UserRoles { get; set; } = null!;
+    //    public DbSet<IdentityUserClaim<string>> UserClaims { get; set; } = null!;
+    //    public DbSet<IdentityUserLogin<string>> UserLogins { get; set; } = null!;
+    //    public DbSet<IdentityRoleClaim<string>> RoleClaims { get; set; } = null!;
+
         public DbSet<House> House { get; set; }
         public DbSet<Layout> Layouts { get; set; }
         public DbSet<Region> Region { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<SubRegion> SubRegions { get; set; }
 
-        public MyContext(DbContextOptions options)
+        public MyContext(DbContextOptions<MyContext> options)
             : base(options) { }
+
+        protected MyContext()
+        {
+
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             // House ↔ SubRegion 配置
             modelBuilder.Entity<House>()
                 .HasOne<SubRegion>()                // House 属于一个 SubRegion
@@ -110,7 +126,7 @@ namespace EstateMapperWeb.Context
                 //);
             });
 
-          
+            base.OnModelCreating(modelBuilder);
 
         }
     }

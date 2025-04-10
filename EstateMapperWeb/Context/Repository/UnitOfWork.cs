@@ -23,6 +23,7 @@ namespace EstateMapperWeb.Context.Repository
         public ITagRepository Tags { get; }
         public ILayoutRepository Layouts { get; }
 
+
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             if (_currentTransaction != null)
