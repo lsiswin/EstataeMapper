@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\11b627f726b8b46414b6713c202e5e6.png" />
+    <None Remove="Images\3f1a2da5fb70dc0c2d27e918f90bdf9.png" />
+    <None Remove="Images\41cd8914d847dd51cd76a1d21791a344.jpeg" />
+    <None Remove="Images\fdb7b6469221ca4c35330ec16c4130db5b0ae0ce.jpg" />
+    <None Remove="Images\IMG_20240815_152941.jpg" />
+    <None Remove="Images\IMG_20250301_112403.jpg" />
+    <None Remove="Images\mmexport1723645861671.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\11b627f726b8b46414b6713c202e5e6.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\3f1a2da5fb70dc0c2d27e918f90bdf9.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\41cd8914d847dd51cd76a1d21791a344.jpeg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\fdb7b6469221ca4c35330ec16c4130db5b0ae0ce.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\IMG_20240815_152941.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\IMG_20250301_112403.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\mmexport1723645861671.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>
