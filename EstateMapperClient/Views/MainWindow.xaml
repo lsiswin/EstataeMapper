@@ -150,7 +150,7 @@
                     <!--  simplest form  -->
                     <materialDesign:Snackbar
                         x:Name="SnackbarOne"
-                        IsActive="False"
+                        IsActive="{Binding IsActive}"
                         Message="{Binding Message}" />
                     <ScrollViewer
                         x:Name="MainScrollViewer"

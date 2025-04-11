@@ -35,7 +35,7 @@ namespace EstateMapperWeb.Services
         {
             var user = await _userManager.FindByNameAsync(dto.UserName);
             if (user == null) {
-                return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "登录失败");
+                return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "用户不存在");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(
@@ -61,9 +61,11 @@ namespace EstateMapperWeb.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Email, email) }),
+                Subject = new ClaimsIdentity(new[] {
+                    new Claim(ClaimTypes.Email, email) }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
@@ -74,15 +76,22 @@ namespace EstateMapperWeb.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<ApiResponse<UserDto>> Register(UserDto dto)
+        public async Task<ApiResponse<LoginResponse>> Register(UserDto dto)
         {
             var user = mapper.Map<User>(dto);
+            //await _userManager.AddToRoleAsync(user,"User");
             var result = await _userManager.CreateAsync(user,dto.Password);
             if (!result.Succeeded)
             {
-                return new ApiResponse<UserDto>(ResultStatus.BADREQUEST, null, "注册失败");
+                return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "注册失败");
             }
-            return new ApiResponse<UserDto>(ResultStatus.OK, mapper.Map<UserDto>(user), "注册成功");
+            // 生成 Token 逻辑
+            var token = GenerateJwtToken(dto.Email);
+            return new ApiResponse<LoginResponse>(
+                ResultStatus.OK,
+                new LoginResponse { Token = token, Expiration = DateTime.UtcNow.AddHours(1) },
+                "注册成功"
+            );
         }
     }
 }

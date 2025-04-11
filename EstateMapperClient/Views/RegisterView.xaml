@@ -1,0 +1,113 @@
+﻿<UserControl
+    x:Class="EstateMapperClient.Views.RegisterView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:EstateMapperClient.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/">
+    <!--  登录卡片容器  -->
+    <Grid VerticalAlignment="Center">
+        <materialDesign:Card
+            Width="350"
+            Padding="20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <StackPanel>
+                <!--  标题  -->
+                <TextBlock
+                    Margin="0,10,0,10"
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    FontWeight="SemiBold"
+                    Text="用户注册" />
+
+                <!--  用户名输入  -->
+
+                <TextBox
+                    Margin="10,10"
+                    materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    materialDesign:HintAssist.Hint="用户名"
+                    FontSize="16"
+                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    Text="{Binding UserName}" />
+
+
+
+                <!--  密码输入  -->
+                <PasswordBox
+                    Margin="10,10,10,10"
+                    common:PasswordHelper.Password="{Binding Password, Mode=TwoWay}"
+                    materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    materialDesign:HintAssist.Hint="密码"
+                    FontSize="16"
+                    Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+
+                <!--  密码输入  -->
+                <PasswordBox
+                    Margin="10,10,10,10"
+                    common:PasswordHelper.Password="{Binding Password, Mode=TwoWay}"
+                    materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    materialDesign:HintAssist.Hint="请确认密码"
+                    FontSize="16"
+                    Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+                <!--  用户名输入  -->
+
+                <TextBox
+                    Margin="10,10"
+                    materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    materialDesign:HintAssist.Hint="手机号码"
+                    materialDesign:TransitionAssist.DisableTransitions="True"
+                    FontSize="16"
+                    MaxLength="11"
+                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    Text="{Binding Phone}" />
+                <TextBox
+                    Margin="10,10"
+                    materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    materialDesign:HintAssist.Hint="邮箱"
+                    FontSize="16"
+                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    Text="{Binding Email}" />
+                <!--  验证码部分  -->
+                <StackPanel Margin="10,5" Orientation="Horizontal">
+                    <TextBox
+                        Width="100"
+                        materialDesign:HintAssist.Hint="验证码"
+                        Text="{Binding CaptchaInput, UpdateSourceTrigger=PropertyChanged}" />
+                    <Image
+                        Width="100"
+                        Height="40"
+                        Source="{Binding CaptchaImage}"
+                        Stretch="Uniform" />
+                    <Button
+                        Command="{Binding RefreshCaptchaCommand}"
+                        Content="换一个"
+                        Style="{StaticResource MaterialDesignFlatButton}" />
+                </StackPanel>
+
+                <DockPanel LastChildFill="False">
+                    <!--  登录按钮  -->
+                    <Button
+                        Margin="10,0"
+                        Command="{Binding RegisterCommand}"
+                        Content="注册"
+                        FontSize="16"
+                        Style="{StaticResource MaterialDesignFlatLightButton}" />
+                    <Button
+                        Command="{Binding CancelCommand}"
+                        Content="取消"
+                        DockPanel.Dock="Right"
+                        FontSize="16"
+                        Style="{StaticResource MaterialDesignFlatLightButton}" />
+                </DockPanel>
+
+
+
+            </StackPanel>
+        </materialDesign:Card>
+
+
+    </Grid>
+</UserControl>

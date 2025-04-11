@@ -17,7 +17,7 @@ namespace EstateMapperWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResponse<UserDto>> Regist([FromBody] UserDto user) => await service.Register(user);
+        public async Task<ApiResponse<LoginResponse>> Register([FromBody] UserDto user) => await service.Register(user);
 
         [HttpPost]
         public async Task<ApiResponse<LoginResponse>> Login([FromBody] UserDto user) => await service.Login(user);

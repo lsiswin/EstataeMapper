@@ -2,15 +2,23 @@
     x:Class="EstateMapperClient.Views.LoginView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:EstateMapperClient.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:EstateMapperClient.Views"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Width="680"
-    Height="400"
-    WindowStyle="None"
-    mc:Ignorable="d">
+    Width="1000"
+    Height="600"
+    AllowsTransparency="True"
+    ResizeMode="NoResize"
+    Style="{StaticResource MaterialDesignWindow}"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None">
     <Grid>
+        <materialDesign:Snackbar
+            x:Name="Snackbar"
+            VerticalAlignment="Top"
+            Panel.ZIndex="1"
+            MessageQueue="{Binding MessageQueue}" />
         <!--  背景图片层  -->
         <Image Source="D:\Cshrap\EstateMapper\EstateMapperLibrary\Images\mmexport1723645861671.jpg" Stretch="UniformToFill">
             <Image.Effect>
@@ -23,6 +31,8 @@
 
         <!--  登录卡片容器  -->
         <Grid VerticalAlignment="Center">
+
+
             <materialDesign:Card
                 Width="350"
                 Padding="20"
@@ -44,13 +54,15 @@
                         materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
                         materialDesign:HintAssist.Hint="用户名"
                         FontSize="16"
-                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                        Text="{Binding UserName}" />
 
 
 
                     <!--  密码输入  -->
                     <PasswordBox
                         Margin="10,10,10,10"
+                        common:PasswordHelper.Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
                         materialDesign:HintAssist.Hint="密码"
                         FontSize="16"
@@ -82,14 +94,15 @@
                 </StackPanel>
             </materialDesign:Card>
 
-            <!--  进度条  -->
-            <ProgressBar
-                Margin="20"
-                VerticalAlignment="Top"
-                IsIndeterminate="{Binding IsLoading}"
-                Style="{StaticResource MaterialDesignCircularProgressBar}"
-                Value="0" />
+
         </Grid>
+        <Button
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Command="{Binding CloseCommand}"
+            Style="{StaticResource MaterialDesignFlatSecondaryLightButton}">
+            <materialDesign:PackIcon Kind="Close" />
+        </Button>
 
     </Grid>
 </Window>
