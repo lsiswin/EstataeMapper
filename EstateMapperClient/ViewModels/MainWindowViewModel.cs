@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Navigation;
 using EstateMapperClient.Common;
+using EstateMapperLibrary.Models;
 using MaterialDesignThemes.Wpf;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -73,7 +74,7 @@ namespace EstateMapperClient.ViewModels
                 }
             );
         }
-        public void Configure()
+        public void Configure(LoginResponse response)
         {
             CreateMenu();
             regionManager.Regions[PrismManager.MainViewRegionName].RequestNavigate("Home");

@@ -6,8 +6,6 @@
     xmlns:local="clr-namespace:EstateMapperClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
-    Width="350"
-    Height="500"
     prism:Dialog.WindowStartupLocation="CenterOwner"
     AllowsTransparency="True"
     Background="Transparent"

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using EstateMapperClient.Common;
 using EstateMapperClient.Services;
 using EstateMapperLibrary.Models;
 using MaterialDesignThemes.Wpf;
@@ -15,7 +16,7 @@ using RestSharp;
 
 namespace EstateMapperClient.ViewModels
 {
-    public class LoginViewModel : BindableBase
+    public class LoginViewModel : ValidatableBase, IDialogAware
     {
         public LoginViewModel(
             ILoginService service,
@@ -31,6 +32,11 @@ namespace EstateMapperClient.ViewModels
             CloseCommand = new DelegateCommand(CloseCurrentWindow);
             this.service = service;
             this.dialogService = dialogService;
+        }
+
+        private void CloseCurrentWindow()
+        {
+            App.Current.Shutdown();
         }
 
         /// <summary>
@@ -72,8 +78,16 @@ namespace EstateMapperClient.ViewModels
             var result = await service.LoginAsync(user);
             if (result.Status == ResultStatus.OK)
             {
-                Application.Current.MainWindow.Show();
-                CloseCurrentWindow();
+                RequestClose.Invoke(
+                    new DialogResult(
+                        ButtonResult.OK,
+                        new DialogParameters
+                        {
+                            { "username", UserName },
+                            { "token", result.Result.Token }
+                        }
+                    )
+                );
             }
             else
             {
@@ -90,13 +104,19 @@ namespace EstateMapperClient.ViewModels
             set { messageQueue = value; }
         }
 
-        public void CloseCurrentWindow()
+        public bool CanCloseDialog()
         {
-            var window = Application
-                .Current.Windows.OfType<Window>()
-                .FirstOrDefault(w => w.IsActive);
+            return true;
+        }
 
-            window?.Close();
+        public void OnDialogClosed()
+        {
+            
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            
         }
 
         private string userName;
@@ -129,15 +149,12 @@ namespace EstateMapperClient.ViewModels
         public DelegateCommand ForgotPasswordCommand { get; }
         public DelegateCommand CloseCommand { get; }
 
-        // 加载状态
-        private bool _isLoading;
         private readonly ILoginService service;
         private readonly IDialogService dialogService;
 
-        public bool IsLoggingIn
-        {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
-        }
+        public event Action<IDialogResult> RequestClose;
+
+
+        public string Title => "";
     }
 }
