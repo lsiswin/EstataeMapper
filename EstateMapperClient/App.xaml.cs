@@ -53,7 +53,6 @@ namespace EstateMapperClient
             // 注册自定义宿主 Window
             containerRegistry.RegisterDialogWindow<CustomDialogWindow>();
             containerRegistry.RegisterDialog<RegisterView, RegisterViewModel>("Register");
-            containerRegistry.RegisterForNavigation<LoginView, LoginViewModel>("Login");
             containerRegistry.RegisterForNavigation<HomeView, HomeViewModel>("Home");
             containerRegistry.RegisterForNavigation<SettingView, SettingViewModel>("Setting");
             containerRegistry.RegisterForNavigation<HouseView, HouseViewModel>("HouseDetail");

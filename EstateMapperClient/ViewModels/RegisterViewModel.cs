@@ -190,6 +190,11 @@ namespace EstateMapperClient.ViewModels
                 // 3. 传递注册结果
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK, parameters));
             }
+            else
+            {
+                RequestClose?.Invoke(new DialogResult(ButtonResult.No));
+            }
+
         }
     }
 }

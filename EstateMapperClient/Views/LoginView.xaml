@@ -6,8 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
     Width="1000"
     Height="600"
+    prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
     ResizeMode="NoResize"
     Style="{StaticResource MaterialDesignWindow}"
@@ -62,8 +64,7 @@
                     <!--  密码输入  -->
                     <PasswordBox
                         Margin="10,10,10,10"
-                        common:PasswordHelper.Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        common:PasswordHelper.Password="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         materialDesign:HintAssist.Hint="密码"
                         FontSize="16"
                         Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />

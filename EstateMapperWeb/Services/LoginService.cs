@@ -48,15 +48,15 @@ namespace EstateMapperWeb.Services
                 return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "登录失败");
             }
             // 生成 Token 逻辑
-            var token = GenerateJwtToken(dto.Email);
+            var token = GenerateJwtToken(dto.UserName);
             return new ApiResponse<LoginResponse>(
-                ResultStatus.BADREQUEST,
+                ResultStatus.OK,
                 new LoginResponse { Token = token, Expiration = DateTime.UtcNow.AddHours(1) },
                 "登录成功"
             );
         }
 
-        private string GenerateJwtToken(string email)
+        private string GenerateJwtToken(string username)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -65,7 +65,7 @@ namespace EstateMapperWeb.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Email, email) }),
+                    new Claim(ClaimTypes.Email, username) }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),

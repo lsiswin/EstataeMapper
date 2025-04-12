@@ -17,7 +17,11 @@ namespace EstateMapperClient.ViewModels
 {
     public class LoginViewModel : BindableBase
     {
-        public LoginViewModel(ILoginService service, IDialogService dialogService,IEventAggregator eventAggregator)
+        public LoginViewModel(
+            ILoginService service,
+            IDialogService dialogService,
+            IEventAggregator eventAggregator
+        )
         {
             // 初始化命令
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
@@ -45,10 +49,17 @@ namespace EstateMapperClient.ViewModels
                 "Register",
                 result =>
                 {
-                    this.UserName = result.Parameters.GetValue<string>("username");
+                    if (result.Result == ButtonResult.OK)
+                    {
+                        this.UserName = result.Parameters.GetValue<string>("username");
+                        MessageQueue.Enqueue("注册成功,请登录!");
+                    }
+                    else if (result.Result == ButtonResult.No)
+                    {
+                        MessageQueue.Enqueue("注册失败,请重试!");
+                    }
                 }
             );
-
         }
 
         /// <summary>
@@ -59,18 +70,18 @@ namespace EstateMapperClient.ViewModels
         {
             var user = new UserDto() { UserName = this.UserName, Password = this.Password };
             var result = await service.LoginAsync(user);
-            if (result.Status == ResultStatus.OK) {
-                Application
-                .Current.MainWindow.Show();
+            if (result.Status == ResultStatus.OK)
+            {
+                Application.Current.MainWindow.Show();
                 CloseCurrentWindow();
-            }else
+            }
+            else
             {
                 MessageQueue.Enqueue("登录失败,请重试!");
-                
-                UserName = "";
                 Password = string.Empty;
             }
         }
+
         private SnackbarMessageQueue messageQueue;
 
         public SnackbarMessageQueue MessageQueue
@@ -78,7 +89,6 @@ namespace EstateMapperClient.ViewModels
             get { return messageQueue; }
             set { messageQueue = value; }
         }
-
 
         public void CloseCurrentWindow()
         {

@@ -38,8 +38,7 @@
                 <!--  密码输入  -->
                 <PasswordBox
                     Margin="10,10,10,10"
-                    common:PasswordHelper.Password="{Binding Password, Mode=TwoWay}"
-                    materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    common:PasswordHelper.Password="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="密码"
                     FontSize="16"
                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
@@ -47,8 +46,7 @@
                 <!--  密码输入  -->
                 <PasswordBox
                     Margin="10,10,10,10"
-                    common:PasswordHelper.Password="{Binding Password, Mode=TwoWay}"
-                    materialDesign:HintAssist.Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    common:PasswordHelper.Password="{Binding Path=ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="请确认密码"
                     FontSize="16"
                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
