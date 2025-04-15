@@ -7,11 +7,11 @@ namespace EstateMapperWeb.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class LoginController:Controller
+    public class AccountController : Controller
     {
         private readonly ILoginService service;
 
-        public LoginController(ILoginService service)
+        public AccountController(ILoginService service)
         {
             this.service = service;
         }

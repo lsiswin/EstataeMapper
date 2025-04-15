@@ -1,11 +1,13 @@
 ﻿using EstateMapperLibrary;
 using EstateMapperLibrary.Models;
 using EstateMapperWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EstateMapperWeb.Controllers
-{
+{   
     [ApiController]
+    [Authorize]
     [Route("api/[controller]/[action]")]
     public class HouseController : ControllerBase
     {
@@ -19,7 +21,7 @@ namespace EstateMapperWeb.Controllers
         [HttpGet("{id}")]
         public async Task<ApiResponse<HouseDto>> GetHouseById(int id) =>
             await service.GetByIdAsync(id);
-
+        
         [HttpGet]
         public async Task<ApiResponse<PagedResult<HouseDto>>> GetPagedAsync(
             [FromBody] HousePagedRequest request

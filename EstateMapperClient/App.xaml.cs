@@ -1,13 +1,16 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using DryIoc;
 using EstateMapperClient.Common;
 using EstateMapperClient.Events;
 using EstateMapperClient.Services;
 using EstateMapperClient.ViewModels;
 using EstateMapperClient.Views;
+using EstateMapperLibrary;
 using EstateMapperLibrary.Models;
 using Prism.DryIoc;
 using Prism.Events;
@@ -31,23 +34,22 @@ namespace EstateMapperClient
         {
             Current.MainWindow.Hide();
             var dialog = containerProvider.Resolve<IDialogService>();
+            var response = new LoginResponse();
             dialog.ShowDialog(
                 "Login",
                 callback =>
                 {
                     if (callback.Result == ButtonResult.OK)
                     {
-                        Environment.Exit(0);
-                        return;
+
+                        response.Token = callback.Parameters.GetValue<string>("token");
                     }
                     Current.MainWindow.Show();
                 }
             );
         }
-
         protected override void OnInitialized()
         {
-            
             var dialog = Container.Resolve<IDialogService>();
             var response = new LoginResponse();
             dialog.ShowDialog(
@@ -57,6 +59,10 @@ namespace EstateMapperClient
                     if (callback.Result == ButtonResult.OK)
                     {
                         response.Token = callback.Parameters.GetValue<string>("token");
+                    }
+                    else
+                    {
+                        App.Current.Shutdown();
                     }
                 }
             );

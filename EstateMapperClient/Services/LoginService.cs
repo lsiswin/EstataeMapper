@@ -22,7 +22,7 @@ namespace EstateMapperClient.Services
         {
             BaseRequest request = new BaseRequest();
             request.Method = RestSharp.Method.Post;
-            request.Route = $"api/Login/Login";
+            request.Route = $"api/Account/Login";
             request.Parameter = user;
             return await httpClient.ExcuExecuteAysnc<LoginResponse>(request);
         }
@@ -31,7 +31,7 @@ namespace EstateMapperClient.Services
         {
             BaseRequest request = new BaseRequest();
             request.Method = RestSharp.Method.Post;
-            request.Route = $"api/Login/Register";
+            request.Route = $"api/Account/Register";
             request.Parameter = user;
             return await httpClient.ExcuExecuteAysnc<UserDto>(request);
         }

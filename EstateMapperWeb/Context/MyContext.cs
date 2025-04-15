@@ -30,7 +30,13 @@ namespace EstateMapperWeb.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.Entity<IdentityRole>(entity =>
+            {
+                entity.HasData(
+                    new IdentityRole {Name="USER" ,NormalizedName="USER"},
+                    new IdentityRole { Name="ADMIN"}
+                    ); 
+            }); 
             // House ↔ SubRegion 配置
             modelBuilder.Entity<House>()
                 .HasOne<SubRegion>()                // House 属于一个 SubRegion

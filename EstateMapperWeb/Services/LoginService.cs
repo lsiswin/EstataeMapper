@@ -14,18 +14,21 @@ namespace EstateMapperWeb.Services
     public class LoginService : ILoginService
     {
         private readonly IMapper mapper;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
 
         public LoginService(
             IMapper mapper,
+            RoleManager<IdentityRole> roleManager,
             UserManager<User> userManager,
             SignInManager<User> signInManager
 ,
             IConfiguration configuration)
         {
             this.mapper = mapper;
+            this.roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
@@ -37,7 +40,7 @@ namespace EstateMapperWeb.Services
             if (user == null) {
                 return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "用户不存在");
             }
-
+            
             var result = await _signInManager.CheckPasswordSignInAsync(
                 user,
                 dto.Password,
@@ -64,6 +67,8 @@ namespace EstateMapperWeb.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
+                Audience = jwtSettings["validAudience"],
+                Issuer = jwtSettings["validIssuer"],
                 Subject = new ClaimsIdentity(new[] {
                     new Claim(ClaimTypes.Email, username) }),
                 Expires = DateTime.UtcNow.AddHours(1),
@@ -79,8 +84,13 @@ namespace EstateMapperWeb.Services
         public async Task<ApiResponse<LoginResponse>> Register(UserDto dto)
         {
             var user = mapper.Map<User>(dto);
-            //await _userManager.AddToRoleAsync(user,"User");
+            var alreadyExists = await roleManager.RoleExistsAsync("User");
+            if (!alreadyExists)
+            {
+                await roleManager.CreateAsync(new IdentityRole("User"));
+            }
             var result = await _userManager.CreateAsync(user,dto.Password);
+            await _userManager.AddToRoleAsync(user,"User");
             if (!result.Succeeded)
             {
                 return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "注册失败");

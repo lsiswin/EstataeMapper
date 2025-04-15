@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using EstateMapperClient.Common;
 using EstateMapperClient.Services;
+using EstateMapperLibrary;
 using EstateMapperLibrary.Models;
 using MaterialDesignThemes.Wpf;
 using Prism.Commands;
@@ -36,7 +37,7 @@ namespace EstateMapperClient.ViewModels
 
         private void CloseCurrentWindow()
         {
-            App.Current.Shutdown();
+            RequestClose.Invoke(new DialogResult(ButtonResult.No));
         }
 
         /// <summary>
@@ -78,13 +79,14 @@ namespace EstateMapperClient.ViewModels
             var result = await service.LoginAsync(user);
             if (result.Status == ResultStatus.OK)
             {
+                TokenStorage.SaveToken(result.Result.Token);
                 RequestClose.Invoke(
                     new DialogResult(
                         ButtonResult.OK,
                         new DialogParameters
                         {
                             { "username", UserName },
-                            { "token", result.Result.Token }
+                            { "token", result.Result.Token },
                         }
                     )
                 );
@@ -109,15 +111,9 @@ namespace EstateMapperClient.ViewModels
             return true;
         }
 
-        public void OnDialogClosed()
-        {
-            
-        }
+        public void OnDialogClosed() { }
 
-        public void OnDialogOpened(IDialogParameters parameters)
-        {
-            
-        }
+        public void OnDialogOpened(IDialogParameters parameters) { }
 
         private string userName;
 
@@ -153,7 +149,6 @@ namespace EstateMapperClient.ViewModels
         private readonly IDialogService dialogService;
 
         public event Action<IDialogResult> RequestClose;
-
 
         public string Title => "";
     }

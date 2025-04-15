@@ -50,6 +50,7 @@
                     Text="请输入内容..." />
                 <Button
                     Margin="10"
+                    Command="{Binding FindHouseCommand}"
                     Content="搜索"
                     Style="{StaticResource MaterialDesignFlatDarkButton}" />
             </StackPanel>

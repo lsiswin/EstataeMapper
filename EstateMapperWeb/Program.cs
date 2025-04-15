@@ -25,18 +25,16 @@ builder.Services.AddDbContext<MyContext>(option =>
 });
 
 builder
-    .Services.AddIdentity<User, IdentityRole>(
-        option => {
-            option.Password.RequiredLength = 6;
-            option.Password.RequireDigit = false;
-            option.Password.RequireLowercase = false;
-            option.Password.RequireUppercase = false;
-            option.Password.RequireNonAlphanumeric = false;
-        }
-    )
+    .Services.AddIdentity<User, IdentityRole>(option =>
+    {
+        option.Password.RequiredLength = 6;
+        option.Password.RequireDigit = false;
+        option.Password.RequireLowercase = false;
+        option.Password.RequireUppercase = false;
+        option.Password.RequireNonAlphanumeric = false;
+    })
     .AddEntityFrameworkStores<MyContext>()
     .AddDefaultTokenProviders();
-
 
 // 配置JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -60,6 +58,23 @@ builder
                 Encoding.UTF8.GetBytes(jwtSettings["secretKey"])
             ),
         };
+        // 自定义事件处理（可选）
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine(
+                    "当前ValidAudience: " + options.TokenValidationParameters.ValidAudience
+                );
+                Console.WriteLine($"认证失败: {context.Exception}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("Token验证成功");
+                return Task.CompletedTask;
+            },
+        };
     });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -82,12 +97,19 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
-app.MapControllers();
-
+app.UseStaticFiles();
 app.UseSwagger();
 
 app.UseSwaggerUI();
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.MapGet(
+    "/debug/routes",
+    (IEnumerable<EndpointDataSource> sources) =>
+        string.Join("\n", sources.SelectMany(src => src.Endpoints))
+);
 
 app.Run();

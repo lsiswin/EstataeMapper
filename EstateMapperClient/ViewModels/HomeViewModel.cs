@@ -28,6 +28,10 @@ namespace EstateMapperClient.ViewModels
                 if (e.PropertyName == nameof(Pagination.CurrentPage))
                     await LoadPageData();
             };
+            FindHouseCommand = new DelegateCommand(() =>
+            {
+                TokenStorage.DeleteToken();
+            });
         }
 
         // 当前页数据（使用ObservableCollection）
@@ -156,8 +160,6 @@ namespace EstateMapperClient.ViewModels
                 RaisePropertyChanged();
             }
         }
-
-        public DelegateCommand<HouseDto> HouseCommand { get; set; }
-        public DelegateCommand<TagDto> TagCommand { get; set; }
+        public DelegateCommand FindHouseCommand { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using EstateMapperLibrary;
 using EstateMapperWeb.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EstateMapperWeb.Controllers
 {
