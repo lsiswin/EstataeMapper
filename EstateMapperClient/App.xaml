@@ -7,6 +7,16 @@
     xmlns:prism="http://prismlibrary.com/">
     <Application.Resources>
         <ResourceDictionary>
+            <!--  在 App.xaml 或当前 XAML 文件的 Resources 中  -->
+            <ControlTemplate x:Key="ValidationErrorTemplate">
+                <StackPanel>
+                    <AdornedElementPlaceholder />
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="Red"
+                        Text="{Binding [0].ErrorContent}" />
+                </StackPanel>
+            </ControlTemplate>
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:BundledTheme
                     BaseTheme="Light"

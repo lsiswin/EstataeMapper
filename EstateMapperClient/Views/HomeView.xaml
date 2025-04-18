@@ -14,6 +14,11 @@
             VerticalAlignment="Center"
             IsIndeterminate="{Binding Progress}"
             Style="{StaticResource MaterialDesignCircularProgressBar}" />
+        <materialDesign:Snackbar
+            x:Name="Snackbar"
+            VerticalAlignment="Top"
+            Panel.ZIndex="1"
+            MessageQueue="{Binding MessageQueue}" />
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
@@ -24,37 +29,27 @@
                 Margin="0,10,0,0"
                 Orientation="Horizontal">
 
-                <ComboBox
-                    Width="100"
-                    Margin="10"
-                    DisplayMemberPath="Name"
-                    FontSize="15"
-                    ItemsSource="{Binding Regions}"
-                    SelectedValue="{Binding SelectedRegionId}"
-                    SelectedValuePath="RegionId" />
-
-                <ComboBox
-                    Width="100"
-                    Margin="10"
-                    DisplayMemberPath="Name"
-                    FontSize="15"
-                    IsEnabled="{Binding HasSelectedRegion}"
-                    ItemsSource="{Binding FilteredSubRegions}"
-                    SelectedValue="{Binding SelectedSubRegionId}"
-                    SelectedValuePath="SubRegionId" />
+                <local:RegionView DataContext="{Binding Region}" />
 
                 <TextBox
                     Width="100"
                     Margin="10"
+                    materialDesign:HintAssist.Hint="请输入内容..."
                     FontSize="15"
-                    Text="请输入内容..." />
+                    Text="{Binding SearchText}" />
                 <Button
                     Margin="10"
-                    Command="{Binding FindHouseCommand}"
+                    Command="{Binding ExecuteFindHouseCommand}"
                     Content="搜索"
+                    Style="{StaticResource MaterialDesignFlatDarkButton}" />
+                <Button
+                    Margin="10"
+                    Command="{Binding ExecutedHouseCommand}"
+                    Content="添加楼盘"
                     Style="{StaticResource MaterialDesignFlatDarkButton}" />
             </StackPanel>
             <Grid Grid.Row="1">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*" />
                     <ColumnDefinition Width="*" />
@@ -114,7 +109,15 @@
                                             </StackPanel>
 
                                             <Button
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.HouseDetailCommand}"
+                                                CommandParameter="{Binding}"
                                                 Content="查看详情"
+                                                DockPanel.Dock="Right"
+                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
+                                            <Button
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.ExecutedHouseCommand}"
+                                                CommandParameter="{Binding}"
+                                                Content="编辑楼盘"
                                                 DockPanel.Dock="Right"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}" />
                                             <ItemsControl ItemsSource="{Binding Tags}">

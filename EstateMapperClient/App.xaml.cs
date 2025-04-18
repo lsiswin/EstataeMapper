@@ -12,6 +12,9 @@ using EstateMapperClient.ViewModels;
 using EstateMapperClient.Views;
 using EstateMapperLibrary;
 using EstateMapperLibrary.Models;
+using Microsoft.Build.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Xaml.Behaviors.Layout;
 using Prism.DryIoc;
 using Prism.Events;
 using Prism.Ioc;
@@ -50,6 +53,29 @@ namespace EstateMapperClient
         }
         protected override void OnInitialized()
         {
+            // 处理非UI线程异常
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                var ex = (Exception)args.ExceptionObject;
+                var handler = Container.Resolve<IGlobalExceptionHandler>();
+                handler.HandleException(ex);
+            };
+
+            // 处理UI线程异常
+            Application.Current.DispatcherUnhandledException += (sender, args) =>
+            {
+                var handler = Container.Resolve<IGlobalExceptionHandler>();
+                handler.HandleException(args.Exception);
+                args.Handled = true; // 阻止应用崩溃
+            };
+
+            // 处理异步任务异常
+            TaskScheduler.UnobservedTaskException += (sender, args) =>
+            {
+                var handler = Container.Resolve<IGlobalExceptionHandler>();
+                handler.HandleException(args.Exception);
+                args.SetObserved(); // 标记为已处理
+            };
             var dialog = Container.Resolve<IDialogService>();
             var response = new LoginResponse();
             dialog.ShowDialog(
@@ -81,17 +107,20 @@ namespace EstateMapperClient
                 .GetContainer()
                 .RegisterInstance(@"http://localhost:5172/", serviceKey: "webUrl");
 
-            // 必须注册窗口类型
+            // 注册异常处理器为单例
+            containerRegistry.RegisterSingleton<IGlobalExceptionHandler, GlobalExceptionHandler>();
 
+            // 必须注册窗口类型
             containerRegistry.Register<IHouseService, HouseService>();
             containerRegistry.Register<ILayoutService, LayoutService>();
             containerRegistry.Register<ITagService, TagService>();
             containerRegistry.Register<ILoginService, LoginService>();
             containerRegistry.Register<ICaptchaService, CaptchaService>();
-
+            
             // 注册自定义宿主 Window
             containerRegistry.RegisterDialogWindow<CustomDialogWindow>();
             containerRegistry.RegisterDialog<RegisterView, RegisterViewModel>("Register");
+            containerRegistry.RegisterDialog<AddHouseView, AddHouseViewModel>("AddHouse");
             containerRegistry.RegisterDialog<LoginView, LoginViewModel>("Login");
             containerRegistry.RegisterForNavigation<HomeView, HomeViewModel>("Home");
             containerRegistry.RegisterForNavigation<SettingView, SettingViewModel>("Setting");

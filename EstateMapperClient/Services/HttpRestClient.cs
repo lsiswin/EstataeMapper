@@ -37,6 +37,7 @@ namespace EstateMapperClient.Services
             {
                 // Token 失效时的处理（如跳转登录）
                 TokenStorage.DeleteToken();
+                throw new AccessViolationException("Token 失效，请重新登录");
             }
             return JsonConvert.DeserializeObject<ApiResponse>(response.Content);
         }
@@ -57,6 +58,7 @@ namespace EstateMapperClient.Services
             {
                 // Token 失效时的处理（如跳转登录）
                 TokenStorage.DeleteToken();
+                throw new AccessViolationException("Token 失效，请重新登录");
             }
             return JsonConvert.DeserializeObject<ApiResponse<T>>(response.Content);
         }

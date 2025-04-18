@@ -5,33 +5,42 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EstateMapperLibrary.Models;
+using Prism.Common;
 using Prism.Mvvm;
+using Prism.Regions;
 
 namespace EstateMapperClient.ViewModels
 {
-    public class HouseViewModel:BindableBase
+    public class HouseViewModel:BindableBase,INavigationAware
     {
-		private ObservableCollection<LayoutDto> layouts;
-
         public HouseViewModel()
         {
-            Layouts = new ObservableCollection<LayoutDto>
-            {
-                new LayoutDto{ 
-                    LayoutName=120,
-                    LayoutUrl="D:\\Cshrap\\EstateMapper\\EstateMapperLibrary\\Images\\11b627f726b8b46414b6713c202e5e6.png"
-                },
-                new LayoutDto{ LayoutName=130,
-                    LayoutUrl="D:\\Cshrap\\EstateMapper\\EstateMapperLibrary\\Images\\11b627f726b8b46414b6713c202e5e6.png"}
-            };
+            
+        }
+        private HouseDto house;
+
+        public HouseDto House
+        {
+            get { return house; }
+            set { house = value; RaisePropertyChanged(); }
         }
 
-        public ObservableCollection<LayoutDto> Layouts
-        {
-			get { return layouts; }
-			set { layouts = value; RaisePropertyChanged(); }
-		}
 
-		
-	}
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+            
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            var param = navigationContext.Parameters;
+            if (param.TryGetValue<HouseDto>("House", out var dto))
+                this.House = dto;
+        }
+    }
 }

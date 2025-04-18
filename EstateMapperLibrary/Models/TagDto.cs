@@ -9,6 +9,13 @@ namespace EstateMapperLibrary.Models
     public class TagDto
     {
         public int Id { get; set; }
-        public string? TagName { get; set; }
+        private string tagName;
+
+        public string TagName
+        {
+            get { return tagName; }
+            set { tagName = value;  }
+        }
+
     }
 }

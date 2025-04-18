@@ -113,7 +113,12 @@ namespace EstateMapperClient.ViewModels
 
         public void OnDialogClosed() { }
 
-        public void OnDialogOpened(IDialogParameters parameters) { }
+        public void OnDialogOpened(IDialogParameters parameters) {
+            if (parameters.ContainsKey("value"))
+            {
+                messageQueue.Enqueue(parameters.GetValue<string>("value"));
+            }
+        }
 
         private string userName;
 
