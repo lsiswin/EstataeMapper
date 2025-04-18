@@ -69,7 +69,7 @@
                             Margin="10,0"
                             materialDesign:HintAssist.Hint="输入楼盘名称"
                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                            Text="{Binding House.Name}" />
+                            Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 
                         <!--  价格  -->
                         <TextBlock
@@ -83,13 +83,9 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             Margin="10,8"
-                            materialDesign:HintAssist.Hint="元/平方米"
+                            materialDesign:HintAssist.Hint="请输入楼盘单价(元/平米)"
                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                            Text="{Binding House.Price, StringFormat=N0}">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding PriceValidationCommand}" />
-                            </TextBox.InputBindings>
-                        </TextBox>
+                            Text="{Binding House.Price}" />
 
                         <!--  楼盘地址  -->
                         <TextBlock
@@ -162,12 +158,13 @@
                                 HorizontalAlignment="Left"
                                 Command="{Binding UploadFloorPlanCommand}"
                                 Content="添加户型图"
+                                IsEnabled="{Binding isLayoutChanged}"
                                 Style="{StaticResource MaterialDesignOutlinedButton}" />
 
                             <ItemsControl
-                                Width="600"
+                                Width="500"
                                 HorizontalAlignment="Left"
-                                ItemsSource="{Binding FloorPlans}">
+                                ItemsSource="{Binding Layouts}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal" />
@@ -175,12 +172,12 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border
-                                            Margin="0,5"
-                                            Padding="10"
-                                            Background="#FAFAFA">
+                                        <Border Padding="10" Background="#FAFAFA">
                                             <DockPanel>
-                                                <TextBlock Width="150" Text="{Binding FileName}" />
+                                                <TextBlock
+                                                    Width="120"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding LayoutName}" />
                                                 <Button
                                                     Command="{Binding DataContext.RemoveFloorPlanCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding}"
@@ -192,6 +189,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+
                         </StackPanel>
                         <Grid Grid.Row="6" Grid.ColumnSpan="2">
                             <Grid.RowDefinitions>

@@ -14,7 +14,6 @@ namespace EstateMapperLibrary.Models
         [StringLength(50)]
         public string Name { get; set; }//楼盘名称
         [Required]
-        [Url]
         public string MainImageUrl { get; set; }//主图
         // 地址结构
         public int SubRegionId { get; set; }      // 所属区县

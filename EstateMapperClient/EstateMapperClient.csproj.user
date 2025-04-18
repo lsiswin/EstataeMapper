@@ -5,6 +5,9 @@
     <Compile Update="Views\AddHouseView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\AddLayoutView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\CustomDialogWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -20,6 +23,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\AddHouseView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\AddLayoutView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\CustomDialogWindow.xaml">

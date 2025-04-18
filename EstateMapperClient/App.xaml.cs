@@ -122,6 +122,7 @@ namespace EstateMapperClient
             containerRegistry.RegisterDialog<RegisterView, RegisterViewModel>("Register");
             containerRegistry.RegisterDialog<AddHouseView, AddHouseViewModel>("AddHouse");
             containerRegistry.RegisterDialog<LoginView, LoginViewModel>("Login");
+            containerRegistry.RegisterDialog<AddLayoutView, AddLayoutViewModel>("Layout");
             containerRegistry.RegisterForNavigation<HomeView, HomeViewModel>("Home");
             containerRegistry.RegisterForNavigation<SettingView, SettingViewModel>("Setting");
             containerRegistry.RegisterForNavigation<HouseView, HouseViewModel>("HouseDetail");

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using EstateMapperClient.Services;
 using EstateMapperLibrary.Models;
 using Microsoft.Build.Framework;
 using Microsoft.Win32;
@@ -19,11 +20,14 @@ namespace EstateMapperClient.ViewModels
 {
     public class AddHouseViewModel : BindableBase, IDialogAware
     {
-        public AddHouseViewModel()
+        public AddHouseViewModel(IDialogService dialogService, IHouseService service)
         {
             UploadMainImageCommand = new DelegateCommand(UploadMainImage);
-            UploadFloorPlanCommand = new DelegateCommand(UploadFloorPlan);
-            RemoveFloorPlanCommand = new DelegateCommand<ImageModel>(RemoveFloorPlan);
+            UploadFloorPlanCommand = new DelegateCommand(
+                UploadFloorPlan,
+                () => isLayoutChanged
+            ).ObservesProperty(() => Name);
+            RemoveFloorPlanCommand = new DelegateCommand<LayoutDto>(RemoveFloorPlan);
             AddTagCommand = new DelegateCommand(AddTag);
             RemoveTagCommand = new DelegateCommand<TagDto>(RemoveTag);
             SubmitCommand = new DelegateCommand(Submit);
@@ -31,9 +35,11 @@ namespace EstateMapperClient.ViewModels
             {
                 RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
+            this.dialogService = dialogService;
+            this.service = service;
         }
 
-        private void Submit()
+        private async void Submit()
         {
             try
             {
@@ -58,27 +64,20 @@ namespace EstateMapperClient.ViewModels
                     File.Copy(MainImage.OriginalPath, mainImageDest);
                     mainImageUrl = mainImageDest;
                 }
-
-                // 保存户型图
-
-                //保存标签
-
                 // 构造提交数据
                 var propertyData = new HouseDto
                 {
                     MainImageUrl = mainImageUrl,
-                    Layouts = Layouts,
+                    Layouts = Layouts.ToList(),
                     SubRegionId = (int)Region.SelectedSubRegionId,
-                    Name = House.Name,
+                    Name = Name,
                     DetailAddress = House.DetailAddress,
                     Price = House.Price,
                     Tags = Tags.ToList(),
                 };
 
                 // 调用后台保存逻辑
-
-
-
+                await service.AddAsync(propertyData);
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
             }
             catch (Exception ex)
@@ -88,7 +87,7 @@ namespace EstateMapperClient.ViewModels
         }
 
         public RegionViewModel Region { get; } = new RegionViewModel();
-        private HouseDto house= new HouseDto();
+        private HouseDto house = new HouseDto();
 
         public HouseDto House
         {
@@ -161,7 +160,6 @@ namespace EstateMapperClient.ViewModels
                 )
             )
             {
-                
                 return;
             }
 
@@ -171,6 +169,8 @@ namespace EstateMapperClient.ViewModels
         }
 
         private readonly Dictionary<string, List<string>> _errors = new();
+        private readonly IDialogService dialogService;
+        private readonly IHouseService service;
 
         //// INotifyDataErrorInfo 实现
         //public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
@@ -194,35 +194,31 @@ namespace EstateMapperClient.ViewModels
         //    ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         //}
 
-        private void RemoveFloorPlan(ImageModel image)
+        private void RemoveFloorPlan(LayoutDto dto)
         {
-            if (image != null)
+            if (dto != null)
             {
-                FloorPlans.Remove(image);
+                Layouts.Remove(dto);
             }
         }
 
         private void UploadFloorPlan()
         {
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter = "Image files (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png",
-                Multiselect = true,
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                foreach (var filePath in openFileDialog.FileNames)
+            var param = new DialogParameters();
+            param.Add("name", Name);
+            dialogService.ShowDialog(
+                "Layout",
+                param,
+                result =>
                 {
-                    FloorPlans.Add(
-                        new ImageModel
-                        {
-                            OriginalPath = filePath,
-                            FileName = Path.GetFileName(filePath),
-                        }
-                    );
+                    if (result.Result == ButtonResult.OK)
+                    {
+                        var layout = result.Parameters.GetValue<LayoutDto>("layout");
+                        // 更新户型图显示（根据实际需求调整）
+                        Layouts.Add(layout);
+                    }
                 }
-            }
+            );
         }
 
         private void UploadMainImage()
@@ -256,15 +252,16 @@ namespace EstateMapperClient.ViewModels
         }
 
         // 户型图集合
-        private ObservableCollection<ImageModel> _floorPlans =
-            new ObservableCollection<ImageModel>();
-        public ObservableCollection<ImageModel> FloorPlans
+        private string name;
+
+        public string Name
         {
-            get => _floorPlans;
+            get { return name; }
             set
             {
-                _floorPlans = value;
+                name = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(isLayoutChanged));
             }
         }
 
@@ -291,13 +288,23 @@ namespace EstateMapperClient.ViewModels
 
         // 命令集合
         public DelegateCommand UploadMainImageCommand { get; }
-        public DelegateCommand UploadFloorPlanCommand { get; }
-        public DelegateCommand<ImageModel> RemoveFloorPlanCommand { get; }
+        public DelegateCommand UploadFloorPlanCommand { get; private set; }
+        public DelegateCommand<LayoutDto> RemoveFloorPlanCommand { get; }
         public DelegateCommand AddTagCommand { get; }
         public DelegateCommand<TagDto> RemoveTagCommand { get; }
         public DelegateCommand SubmitCommand { get; }
         public DelegateCommand CanleCommand { get; }
-        public List<LayoutDto> Layouts { get; private set; }
+        private ObservableCollection<LayoutDto> layouts = new ObservableCollection<LayoutDto>();
+        public bool isLayoutChanged => !string.IsNullOrWhiteSpace(Name);
+        public ObservableCollection<LayoutDto> Layouts
+        {
+            get { return layouts; }
+            set
+            {
+                layouts = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public class ImageModel
         {
