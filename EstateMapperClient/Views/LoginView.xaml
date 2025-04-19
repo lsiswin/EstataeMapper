@@ -16,9 +16,9 @@
             Panel.ZIndex="1"
             MessageQueue="{Binding MessageQueue}" />
         <!--  背景图片层  -->
-        <Image Source="D:\Cshrap\EstateMapper\EstateMapperLibrary\Images\mmexport1723645861671.jpg" Stretch="UniformToFill">
+        <Image Source="D:\Cshrap\EstateMapper\EstateMapperLibrary\Image\mmexport1723645861671.jpg" Stretch="UniformToFill">
             <Image.Effect>
-                <BlurEffect Radius="15" />
+                <BlurEffect Radius="25" />
             </Image.Effect>
         </Image>
 

@@ -33,10 +33,10 @@ namespace EstateMapperWeb.Context
             //modelBuilder.Entity<IdentityRole>(entity =>
             //{
             //    entity.HasData(
-            //        new IdentityRole {Name="USER" ,NormalizedName="USER"},
-            //        new IdentityRole { Name="ADMIN"}
-            //        ); 
-            //}); 
+            //        //new IdentityRole { Name = "USER", NormalizedName = "USER" },
+            //        new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN" }
+            //        );
+            //});
             // House ↔ SubRegion 配置
             modelBuilder.Entity<House>()
                 .HasOne<SubRegion>()                // House 属于一个 SubRegion

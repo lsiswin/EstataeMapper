@@ -23,9 +23,9 @@ namespace EstateMapperWeb.Services
             IMapper mapper,
             RoleManager<IdentityRole> roleManager,
             UserManager<User> userManager,
-            SignInManager<User> signInManager
-,
-            IConfiguration configuration)
+            SignInManager<User> signInManager,
+            IConfiguration configuration
+        )
         {
             this.mapper = mapper;
             this.roleManager = roleManager;
@@ -37,10 +37,11 @@ namespace EstateMapperWeb.Services
         public async Task<ApiResponse<LoginResponse>> Login(UserDto dto)
         {
             var user = await _userManager.FindByNameAsync(dto.UserName);
-            if (user == null) {
+            if (user == null)
+            {
                 return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "用户不存在");
             }
-            
+
             var result = await _signInManager.CheckPasswordSignInAsync(
                 user,
                 dto.Password,
@@ -51,7 +52,7 @@ namespace EstateMapperWeb.Services
                 return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "登录失败");
             }
             // 生成 Token 逻辑
-            var token = GenerateJwtToken(dto.UserName);
+            var token = await GenerateJwtToken(user);
             return new ApiResponse<LoginResponse>(
                 ResultStatus.OK,
                 new LoginResponse { Token = token, Expiration = DateTime.UtcNow.AddHours(1) },
@@ -59,18 +60,26 @@ namespace EstateMapperWeb.Services
             );
         }
 
-        private string GenerateJwtToken(string username)
+        private async Task<string> GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
-
+            var roles = await _userManager.GetRolesAsync(user); // 获取用户角色
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role)); // 添加角色声明
+            }
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Audience = jwtSettings["validAudience"],
                 Issuer = jwtSettings["validIssuer"],
-                Subject = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Email, username) }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
@@ -84,19 +93,19 @@ namespace EstateMapperWeb.Services
         public async Task<ApiResponse<LoginResponse>> Register(UserDto dto)
         {
             var user = mapper.Map<User>(dto);
-            var alreadyExists = await roleManager.RoleExistsAsync("User");
+            var alreadyExists = await roleManager.RoleExistsAsync("Admin");
             if (!alreadyExists)
             {
-                await roleManager.CreateAsync(new IdentityRole("User"));
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
-            var result = await _userManager.CreateAsync(user,dto.Password);
-            await _userManager.AddToRoleAsync(user,"User");
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            await _userManager.AddToRoleAsync(user, "Admin");
             if (!result.Succeeded)
             {
                 return new ApiResponse<LoginResponse>(ResultStatus.BADREQUEST, null, "注册失败");
             }
             // 生成 Token 逻辑
-            var token = GenerateJwtToken(dto.Email);
+            var token = await GenerateJwtToken(user);
             return new ApiResponse<LoginResponse>(
                 ResultStatus.OK,
                 new LoginResponse { Token = token, Expiration = DateTime.UtcNow.AddHours(1) },

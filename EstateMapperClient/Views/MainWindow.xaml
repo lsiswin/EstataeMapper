@@ -22,20 +22,10 @@
                     <ToggleButton
                         Margin="16"
                         HorizontalAlignment="Right"
+                        Command="{Binding ExecuLeftCommand}"
                         DockPanel.Dock="Top"
                         IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}"
                         Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
-
-                    <TextBox
-                        x:Name="DemoItemsSearchBox"
-                        Width="200"
-                        Margin="16,4"
-                        materialDesign:HintAssist.Hint="Search"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        DockPanel.Dock="Top"
-                        Style="{StaticResource MaterialDesignOutlinedTextBox}" />
-
                     <ListBox Margin="0,20" ItemsSource="{Binding MenuItems}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">

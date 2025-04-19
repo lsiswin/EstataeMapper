@@ -28,6 +28,7 @@ namespace EstateMapperWeb.Controllers
         ) => await service.GetPagedAsync(request);
 
         [HttpPost]
+        [Authorize(Roles ="ADMIN")]
         public async Task<ApiResponse<HouseDto>> CreateAsync([FromBody]HouseDto entity) =>
             await service.CreateAsync(entity);
         [HttpPut]

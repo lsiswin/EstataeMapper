@@ -44,11 +44,9 @@ namespace EstateMapperClient.ViewModels
             try
             {
                 // 创建保存目录
-                var savePath = Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "PropertyUploads",
-                    DateTime.Now.ToString("yyyyMMddHHmmss")
-                );
+                var savePath = GetSavePath();
+
+                // 创建目录（递归创建不存在的父目录）
                 Directory.CreateDirectory(savePath);
 
                 // 保存主图
@@ -75,15 +73,41 @@ namespace EstateMapperClient.ViewModels
                     Price = House.Price,
                     Tags = Tags.ToList(),
                 };
-
                 // 调用后台保存逻辑
-                await service.AddAsync(propertyData);
-                RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                if (IsUpdate)
+                {
+                    var result = await service.UpdateAsync(propertyData);
+                    if (result.Status == ResultStatus.OK)
+                    {
+                        RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                    }
+                }
+                else
+                {
+                    var result = await service.AddAsync(propertyData);
+                    if (result.Status == ResultStatus.FORBIDDEN)
+                    {
+                        RequestClose?.Invoke(new DialogResult(ButtonResult.Retry));
+                    }
+                    if (result.Status == ResultStatus.OK)
+                    {
+                        RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                    }
+                }
+                RequestClose?.Invoke(new DialogResult(ButtonResult.No));
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"提交失败：{ex.Message}");
             }
+        }
+
+        private string GetSavePath()
+        {
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var relativePath = Path.Combine("PropertyUploads");
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            return Path.Combine(baseDirectory, relativePath, timestamp);
         }
 
         public RegionViewModel Region { get; } = new RegionViewModel();
@@ -240,7 +264,7 @@ namespace EstateMapperClient.ViewModels
             }
         }
 
-        private ImageModel _mainImage;
+        private ImageModel _mainImage = new ImageModel();
         public ImageModel MainImage
         {
             get => _mainImage;
@@ -283,8 +307,20 @@ namespace EstateMapperClient.ViewModels
             if (parameters.ContainsKey("House"))
             {
                 House = parameters.GetValue<HouseDto>("House");
+                Name = House.Name;
+                Layouts = new ObservableCollection<LayoutDto>(House.Layouts);
+                Tags = new ObservableCollection<TagDto>(House.Tags);
+                MainImage.Thumbnail = GenerateThumbnail(House.MainImageUrl, 300);
+                var subregion = Region
+                    .SubRegions.Where(p => p.SubRegionId == House.SubRegionId)
+                    .FirstOrDefault();
+                Region.SelectedRegionId = subregion.RegionId;
+                Region.SelectedSubRegionId = subregion.SubRegionId;
+                IsUpdate = true;
             }
         }
+
+        private bool IsUpdate { get; set; }
 
         // 命令集合
         public DelegateCommand UploadMainImageCommand { get; }

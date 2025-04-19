@@ -50,22 +50,25 @@ namespace EstateMapperClient.ViewModels
             var parame = new DialogParameters { { "region", Region.Regions } };
             if (dto != null)
             {
-                parame.Add("House",dto);
-                
+                parame.Add("House", dto);
             }
             dialogService.ShowDialog(
-                    "AddHouse",
-                    parame,
-                    r =>
+                "AddHouse",
+                parame,
+                r =>
+                {
+                    if (r.Result == ButtonResult.OK)
                     {
-                        if (r.Result == ButtonResult.OK)
-                        {
-                            MessageQueue.Enqueue("添加成功");
-                            // 处理确认按钮点击事件
-                            LoadPageData();
-                        }
+                        MessageQueue.Enqueue("添加成功");
                     }
-                );
+                    else if (r.Result == ButtonResult.Retry)
+                    {
+                        MessageQueue.Enqueue("权限不足,添加失败!");
+                    }
+                    // 处理确认按钮点击事件
+                    LoadPageData();
+                }
+            );
         }
 
         private void HouseDetail(HouseDto dto)
